@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILC - Taste of India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Your CSS Rules */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9933, #fff, #138808); /* Indian flag gradient */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative; /* Needed for absolute positioning of the button */
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.9); 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            max-width: 200px; 
+            height: auto;
+            display: block;
+            margin: 0 auto 1rem; 
+        }
+
+        header h1 { 
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #222; /* Darker heading */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;  
+            flex-grow: 1; 
+            flex-wrap: wrap; 
+            gap: 2rem; 
+        }
+
+        .food-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 2rem;
+            flex-grow: 1; 
+            max-width: 900px; 
+            
+        }
+
+        .food-items h2 {
+            grid-column: 1 / -1; 
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #555; 
+            font-weight: 600;
+        }
+
+        .shopItem {
+            background-color: rgba(255, 255, 255, 0.95); 
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column; 
+            justify-content: space-between; 
+        }
+
+        .imgName { 
+            max-width: 100%;
+            height: 180px; 
+            object-fit: cover; 
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .shopItem div { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem; 
+            flex-grow: 1; 
+        }
+
+        .dressName {
+            font-weight: 600;
+            color: #444;
+            text-align: left;
+             flex-grow: 1; 
+             margin-right: 10px; 
+        }
+
+        .priceVal { 
+            color: #008000; 
+            font-weight: bold;
+            white-space: nowrap; 
+        }
+
+        .cartItemButton { 
+            background-color: #008000; 
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: auto; 
+            font-weight: 600;
+        }
+
+        .cartItemButton:hover {
+            background-color: #006400; 
+        }
+
+        #cartBox {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem; 
+            width: 100%; 
+            max-width: 450px; /* Max width */
+            min-width: 300px; /* Min width */
+            height: fit-content; /* Adjust height based on content */
+            max-height: 80vh; /* Limit max height */
+            overflow-y: auto; /* Scroll if content overflows */
+            display: flex;
+            flex-direction: column;
+            /* Removed margin-left, using gap in container */
+        }
+
+        #cartBox h2 {
+            text-align: center;
+            margin-bottom: 1.5rem; /* More space below Cart title */
+            color: #555;
+        }
+
+        #cartItemHeadingText {
+            display: grid;
+            grid-template-columns: 3fr 1.2fr 1fr 1fr; /* Adjusted columns */
+            gap: 10px; /* Increased gap */
+            font-weight: bold;
+            padding-bottom: 0.5rem; /* More space below heading */
+            border-bottom: 1px solid #ddd; /* Slightly darker border */
+            align-items: center;
+            font-size: 0.9rem; /* Slightly larger font */
+            margin-bottom: 0.5rem; /* Space before items start */
+        }
+
+        #cartItemHeadingText span:nth-child(2), /* Price header */
+        #cartItemHeadingText span:nth-child(3) { /* Qty header */
+             text-align: center;
+        }
+         #cartItemHeadingText span:last-child { /* Remove header */
+             text-align: right;
+        }
+
+
+        .cartSection {
+             margin-top: 0.5rem;
+             flex-grow: 1; /* Allow this section to grow */
+             overflow-y: auto; /* Scroll inner section if needed */
+             margin-bottom: 1rem; /* Space before total */
+        }
+
+
+        .cartRows { /* Container for all cart item rows */
+             /* No specific styles needed here unless for spacing */
+        }
+
+        .cartRows .cart-row { /* Style for each item row (assuming JS adds this class) */
+            display: grid;
+            grid-template-columns: 3fr 1.2fr 1fr 1fr; /* Match heading columns */
+            gap: 10px; /* Match heading gap */
+            padding: 0.6rem 0; /* Padding top/bottom */
+            border-bottom: 1px solid #eee; /* Lighter border between items */
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .cartRows .cart-row:last-child {
+            border-bottom: none; /* No border for the last item */
+        }
+
+        /* Column alignment within a cart row */
+         .cart-item-title { /* Assuming JS uses this class */
+             display: flex;
+             align-items: center;
+             font-size: 0.85rem; /* Slightly smaller item name */
+         }
+
+         .cart-price { /* Assuming JS uses this class */
+             text-align: center;
+         }
+
+        .cartImage { /* Style for the small image in cart */
+            width: 50px; /* Smaller image */
+            height: 50px;
+            margin-right: 8px;
+            border-radius: 4px;
+             object-fit: cover;
+        }
+
+        .cartQuantity { /* Container for quantity input/buttons */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-btn {
+            background: #eee; /* Light background */
+            border: 1px solid #ccc;
+            padding: 3px 6px;
+            margin: 0 3px; /* Adjusted margin */
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem; /* Slightly larger */
+             line-height: 1; /* Ensure vertical alignment */
+        }
+         .quantity-btn:hover {
+             background: #ddd;
+         }
+
+        .quantity-input { /* Assuming JS uses this class */
+            width: 35px; /* Wider input */
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 4px; /* Slightly more padding */
+            margin: 0 3px; /* Adjusted margin */
+            font-size: 0.9rem;
+            -moz-appearance: textfield; /* Hide spinners Firefox */
+        }
+         .quantity-input::-webkit-outer-spin-button, /* Hide spinners da spinners  Chrome, Safari, Edge */
+         .quantity-input::-webkit-inner-spin-button {
+             -webkit-appearance: none;
+             margin: 0;
+         }
+
+
+        .removebutton { /* Style for remove button in cart */
+            background-color: #dc3545; /* Red remove button */
+            color: white;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem; /* Slightly larger */
+            transition: background-color 0.3s ease;
+            justify-self: center; /* Center button in its grid cell */
+        }
+
+        .removebutton:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+
+        .carttotal { /* Container for Total label and price */
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-top: 1rem; /* Space above total */
+            padding-top: 1rem; /* Space below items */
+            border-top: 1px solid #ddd; /* Separator line */
+            font-size: 1.1rem; /* Larger total font */
+             color: #333;
+        }
+
+        #checkoutButton {
+            background-color: #f89406; /* Orange checkout button */
+            color: white;
+            padding: 0.9rem 1.5rem; /* Larger padding */
+            font-size: 1rem; /* Larger font */
+            margin-top: 1rem; /* Space above checkout */
+            transition: background-color 0.3s ease;
+            text-align: center;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             width: 100%; /* Full width */
+             font-weight: 600;
+        }
+
+        #checkoutButton:hover {
+            background-color: #e08400; /* Darker orange on hover */
+        }
+
+        #thankYouMessage { /* Styles for Thank You message */
+            text-align: center;
+            padding: 20px;
+            margin: 2rem auto; /* Center horizontally */
+             background-color: rgba(255, 255, 255, 0.95);
+             border-radius: 8px;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             max-width: 600px;
+        }
+
+        #thankYouMessage h1 {
+            color: #008000; /* Green heading */
+            margin-bottom: 15px;
+        }
+
+        #thankYouMessage p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+         #thankYouMessage a {
+             color: #008000;
+             text-decoration: none;
+             font-weight: bold;
+         }
+          #thankYouMessage a:hover {
+             text-decoration: underline;
+         }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem 0; /* Increased padding */
+            background-color: rgba(0, 0, 0, 0.8); /* Darker footer */
+            color: #f0f0f0; /* Lighter text */
+            margin-top: auto; /* Push footer to bottom */
+            font-size: 0.9rem;
+        }
+
+        #translateButton { /* Style for Translate Button */
+            position: absolute;
+            top: 15px; /* Adjusted position */
+            right: 15px;
+            background-color: #008000;
+            color: white;
+            padding: 0.6rem 1.2rem; /* Adjusted padding */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 1000; /* Ensure it's on top */
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        #translateButton:hover {
+            background-color: #006400;
+        }
+
+        /* Basic Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Stack items and cart vertically */
+                align-items: center; /* Center items in column */
+            }
+            .food-items {
+                max-width: 100%; /* Allow food items full width */
+                margin-right: 0; /* Remove margin */
+            }
+            #cartBox {
+                max-width: 90%; /* Allow cart more width */
+                margin-left: 0;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            #translateButton {
+                top: 10px;
+                right: 10px;
+                padding: 0.5rem 1rem;
+            }
+        }
+         @media (max-width: 480px) {
+             .food-items {
+                 grid-template-columns: 1fr; /* Single column on very small screens */
+             }
+             header h1 {
+                 font-size: 1.8rem;
+             }
+              #cartItemHeadingText, .cartRows .cart-row {
+                   grid-template-columns: 2.5fr 1fr 1fr 1fr; /* Adjust cart columns */
+                   font-size: 0.8rem;
+              }
+              .cart-item-title {
+                   font-size: 0.8rem;
+              }
+              .cartImage {
+                   width: 40px;
+                   height: 40px;
+              }
+              #checkoutButton, .cartItemButton {
+                   padding: 0.7rem 1.2rem;
+                   font-size: 0.9rem;
+              }
+         }
+
+    </style>
+</head>
+<body>
+
+    <button id="translateButton">Translate to Hindi</button>
+
+    <header>
+        <img src="Images/index_images/silc_home.jpg" alt="SILC Logo"> <h1>Flavors of India</h1>
+    </header>
+
+    <div class="container">
+        <div class="food-items">
+            <h2>Appetizers</h2>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/samosareal.jpg" alt='Potato Samosa'> <div>
+                    <span class="dressName">Potato Samosa (2 pc)</span>
+                    <span class="priceVal">$ 8.99</span>
+                </div>
+                <button class='cartItemButton' type='button'>Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/vegetablepakra2.jpg" alt="Vegetable Pakora"> <div>
+                    <span class="dressName">Vegetable Pakora</span>
+                    <span class="priceVal">$ 7.50</span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+
+            <h2>Main Courses (Vegetarian)</h2>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/Dosareal.jpg" alt="Paper Dosa"> <div>
+                    <span class="dressName">Paper Dosa</span>
+                    <span class="priceVal">$ 15.00</span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/paneerreal.jpg" alt="Paneer Makhani"> <div>
+                    <span class="dressName">Paneer Makhani</span>
+                    <span class="priceVal">$ 18.99 </span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/chanamasala.jpg" alt="Chana Masala"> <div>
+                    <span class="dressName">Chana Masala</span>
+                    <span class="priceVal">$ 12.50 </span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/indiansalad.jpg" alt="Indian Salad"> <div>
+                    <span class="dressName">Indian Salad</span>
+                    <span class="priceVal">$ 4.99 </span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+
+            <h2>Main Courses (Non-Vegetarian)</h2>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/btterfchek.jpg" alt="Butter Chicken"> <div>
+                    <span class="dressName">Butter Chicken</span>
+                    <span class="priceVal">$ 16.99 </span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/tndoor.jpg" alt="Tandoor Chicken"> <div>
+                    <span class="dressName">Tandoor Chicken</span>
+                    <span class="priceVal">$ 13.99 </span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+
+            <h2>Breads</h2>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/Garlic-Naan-square-FS-42.jpg" alt="Garlic Naan"> <div>
+                    <span class="dressName">Garlic Naan</span>
+                    <span class="priceVal">$ 5.50 </span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/plainaan.jpg" alt="Plain Naan"> <div>
+                    <span class="dressName">Plain Naan</span>
+                    <span class="priceVal">$ 4.50</span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+
+             <h2>Rice</h2>
+             <div class="shopItem">
+                 <img class="imgName" src="Images/Foods/jeerarice.jpg" alt="Jeera Rice"> <div>
+                     <span class="dressName">Jeera Rice</span>
+                     <span class="priceVal">$ 6.00</span>
+                 </div>
+                 <button class='cartItemButton' type="button">Add to Cart</button>
+             </div>
+             <div class="shopItem">
+                 <img class="imgName" src="Images/Foods/vegbiryna.jpg" alt="Veg Biryani"> <div>
+                     <span class="dressName">Veg Biryani</span>
+                     <span class="priceVal">$ 12.99</span>
+                 </div>
+                 <button class='cartItemButton' type="button">Add to Cart</button>
+             </div>
+             <div class="shopItem">
+                 <img class="imgName" src="Images/Foods/muttonbiryani.jpg" alt="Mutton Biryani"> <div>
+                     <span class="dressName">Mutton Biryani</span>
+                     <span class="priceVal">$ 16.99</span>
+                 </div>
+                 <button class='cartItemButton' type="button">Add to Cart</button>
+             </div>
+
+            <h2>Desserts</h2>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/Jalebireal.jpeg" alt="Hot Jalebi"> <div>
+                    <span class="dressName">Hot Jalebi</span>
+                    <span class="priceVal">$ 5.99</span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+            <div class="shopItem">
+                <img class="imgName" src="Images/Foods/gulab.jpg" alt="Gulab Jamun"> <div>
+                    <span class="dressName">Gulab Jamun (2 pc)</span>
+                    <span class="priceVal">$ 6.50</span>
+                </div>
+                <button class='cartItemButton' type="button">Add to Cart</button>
+            </div>
+        </div> <div id="cartBox">
+            <h2>Cart</h2>
+            <div id='cartItemHeadingText'>
+                <span>ITEM</span>
+                <span>PRICE</span>
+                <span>QTY</span>
+                <span></span> </div>
+            <div class='cartSection'>
+                <div class='cartRows'>
+                    </div>
+            </div>
+            <div class="carttotal">
+                <strong class="carttotaltitle">Total</strong>
+                <span class="carttotalprice">$0.00</span>
+            </div>
+            <button id="checkoutButton" type="button">Checkout</button>
+        </div> </div> <footer>
+        <p>&copy; 2025 SILC - The Taste of India - Agastya Pande 2025.</p>
+        </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
